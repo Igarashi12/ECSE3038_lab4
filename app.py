@@ -45,11 +45,12 @@ migrate = Migrate(app, db)
 def home():
     return "Hello There"
 
+#GET /profile
 @app.route("/profile", methods=["GET"])
 def get_profile():
     return jsonify(profile)
 
-
+#POST /profile
 @app.route("/profile", methods=["POST"])
 def post_profile():
     profile["data"]["last_updated"] = datetime.now()
@@ -60,6 +61,7 @@ def post_profile():
     
     return profile
 
+#PATCH /profile
 @app.route("/profile", methods=["PATCH"])
 def update_profile():
     if "username" in request.json:
@@ -83,7 +85,7 @@ def get_tank():
 
     return jsonify(tank_list)
 
-
+#POST /data
 @app.route("/data", methods=["POST"])
 def add_tank():
  newTank = Tank(
@@ -96,25 +98,28 @@ def add_tank():
  db.session.commit()
  return TankSchema().dump(newTank)
 
+#PATCH /data
 @app.route("/data/<int:id>", methods=["PATCH"])
-def update_dish(id):
-  tank_w = Tank.query.get(id)
+def update_tank(id):
+  tank_u = Tank.query.get(id)
   update = request.json
 
   if "location" in update:
-    tank_w.location = update["location"]
+    tank_u.location = update["location"]
   if "lat" in update:
-    tank_w.lat = update["lat"]
+    tank_u.lat = update["lat"]
   if "long" in update:
-    tank_w.long = update["long"]
+    tank_u.long = update["long"]
   if "percentage_full" in update:
-    tank_w.percentage_full = update["percentage_full"]
+    tank_u.percentage_full = update["percentage_full"]
   db.session.commit()
-  return TankSchema().dump(tank_w)
+  return TankSchema().dump(tank_u)
+
+#DELETE /data
 @app.route("/data/<int:id>", methods=["DELETE"])
 def delete_tank(id):
-    tank = Tank.query.get(id)
-    db.session.delete(tank)
+    tank_d = Tank.query.get(id)
+    db.session.delete(tank_d)
     db.session.commit()
 
     return {
